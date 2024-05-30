@@ -19,6 +19,5 @@ router.get('/get', (req, res) => {
     }
 
     fetchSparepart();
-    db.end();
 });
 module.exports = router;

@@ -1,7 +1,55 @@
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
 function Navbar() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const url = `${import.meta.env.API_URL}/rest/api/accounts/isloggedin`;
+        const checkLoggedIn = async () => {
+            try {
+                const response = await axios.get(url);
+                setIsLoggedIn(response.data.isLoggedIn);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        console.log(checkLoggedIn());
+    }, []);
+
     return (
-        <div>
-            <div>sad</div>
+        <div className="transition-all ease-in-out delay-75 hover:text-[#FFD369] hover:bg-[#222831] h-20 border-b-4 border-[#393E46] flex justify-between items-center ">
+            <div className="pl-32 text-xl">
+                <span className="text-5xl">{'MM>'}</span>
+                <span>Marsel Mechanic</span>
+            </div>
+            <div className="flex pr-32 text-xl gap-10 ">
+                <Link to={'/'}>
+                    <span className=" hover:text-[#FEEFAD]">Home</span>
+                </Link>
+                <Link to={'/store'}>
+                    <span className=" hover:text-[#FEEFAD]">Store</span>
+                </Link>
+                <Link to={'/about'}>
+                    <span className=" hover:text-[#FEEFAD]">About</span>
+                </Link>
+                {!isLoggedIn ? (
+                    <>
+                        <Link to={'/login'}>
+                            <span className=" hover:text-[#FEEFAD]">SignIn</span>
+                        </Link>
+                        <Link to={'/register'}>
+                            <span className=" hover:text-[#FEEFAD]">SignUp</span>
+                        </Link>
+                    </>
+                ) : (
+                    <Link to={'/logout'}>
+                        <span className=" hover:text-[#FEEFAD]">SignOut</span>
+                    </Link>
+                )}
+            </div>
         </div>
     );
 }
