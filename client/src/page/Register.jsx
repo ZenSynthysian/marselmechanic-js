@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-function Login() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+function Register() {
     const [resData, setResData] = useState(null);
     const [formData, setFormData] = useState({
+        email: '',
         username: '',
         password: '',
     });
@@ -22,35 +22,26 @@ function Login() {
         try {
             const sendData = async () => {
                 const data = {
+                    email: formData.email,
                     username: formData.username,
                     password: formData.password,
                 };
 
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/accounts/login`, data);
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/accounts/register`, data);
                 if (!response.status === 200) {
                     console.error('gagal mengirim data');
                 } else {
-                    setResData('Login sukses');
+                    setResData('registrasi sukses');
                 }
                 console.log(response.status);
             };
 
-            const getLogin = async () => {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/isloggedin`);
-                if (!response.status === 200) {
-                    console.error('gagal mengirim data');
-                } else {
-                    setIsLoggedIn(response.data.isLoggedIn);
-                }
-                console.log(isLoggedIn);
-            };
-            sendData();
-            getLogin();
+            await sendData();
         } catch (err) {
             if (err) {
                 setResData(err.response.data.error);
             } else {
-                console.log('Login sukses');
+                console.log('register sukses');
             }
         }
     }
@@ -59,7 +50,7 @@ function Login() {
         <>
             <div className="flex flex-col gap-20 p-20 grow">
                 <div className="text-5xl text-center">
-                    <span>SignIn</span>
+                    <span>Register</span>
                 </div>
                 <div className="flex justify-center items-center">
                     <div className="group transition-all delay-100 ease-in-out w-[42rem] p-3 hover:bg-deepdark hover:border-solid rounded-es-xl rounded-tr-xl flex flex-col border-deepdark border-4 border-dotted gap-10">
@@ -67,7 +58,16 @@ function Login() {
                             <form
                                 onSubmit={handleSubmit}
                                 className="flex flex-col justify-center items-center gap-3 pt-9 pb-9">
-                                {resData == 'registrasi sukses' ? <span className="text-green">Login sukses</span> : <span className="text-red">{resData}</span>}
+                                {resData == 'registrasi sukses' ? <span className="text-green">Registrasi sukses</span> : <span className="text-red">{resData}</span>}
+                                <input
+                                    onChange={(e) => handleChange(e)}
+                                    className="p-2 rounded-full border-2 w-96 hover:border-lightyellow placeholder:text-center text-center  outline-none"
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    placeholder="Email"
+                                    required
+                                />
                                 <input
                                     onChange={(e) => handleChange(e)}
                                     className="p-2 rounded-full border-2 w-96 hover:border-lightyellow placeholder:text-center text-center  outline-none"
@@ -91,16 +91,15 @@ function Login() {
                                 <input
                                     className="p-2 rounded-full border-2 w-96 group-hover:border-lightyellow group-last:hover:text-deepdark group-hover:text-lightyellow hover:bg-lightyellow  focus:bg-transparent focus:outline-none placeholder:text-center text-center  outline-none"
                                     type="submit"
-                                    value={'SignIn'}
                                 />
                             </form>
                             <div className="pb-3">
                                 <p className="text-center text-lightdark group-hover:text-lightwhite">
-                                    Belum Punya Akun?{' '}
+                                    Sudah Punya Akun?{' '}
                                     <a
-                                        href="/register"
+                                        href="/login"
                                         className="hover:text-lightyellow">
-                                        SignUp
+                                        Login
                                     </a>
                                 </p>
                             </div>
@@ -112,4 +111,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Register;
