@@ -2,20 +2,15 @@ const express = require('express');
 // const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const db = require('../helper/sql');
-const crypto = require('crypto');
-
 const router = express.Router();
-
-// create a hash secret key
-// const secretKey = crypto.randomBytes(32).toString('hex');
-// const hashedSecretKey = crypto.createHash('sha256').update(secretKey).digest('hex');
+require('dotenv').config();
 
 // create a session
 router.use(
     session({
         secret: 'AYAM-TERBANG',
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 * 30 },
     })
 );
@@ -89,8 +84,8 @@ router.post('/register', (req, res) => {
                     }
                 });
             });
-
-            res.status(200).json({ message: 'register successful' });
+            console.log('register success');
+            res.status(200).redirect(`${process.env.CLIENT_API}/login`);
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
@@ -104,26 +99,24 @@ router.post('/login', (req, res) => {
         try {
             const { username, password } = req.body;
             if (!username || !password) {
-                res.status(400).json({ error: 'Missing username or password' });
+                return res.status(400).json({ error: 'Missing username or password' });
             }
 
             const query = `SELECT * FROM accounts WHERE (username = '${username}' OR email='${username}') AND password = '${password}'`;
-            let data = await new Promise((resolve, reject) => {
+            const data = await new Promise((resolve, reject) => {
                 db.query(query, (err, response) => {
                     if (err) {
                         reject(new Error('Fail to fetch accounts'));
                     } else {
                         if (!response[0]) {
-                            res.status(400).json({ error: 'Invalid username or password' });
-                            return;
+                            return res.status(400).json({ error: 'Invalid username or password' });
                         }
-
-                        req.session.user = { username: username };
                         resolve(response);
                     }
                 });
             });
 
+            req.session.user = username; // Set session setelah query selesai
             res.status(200).json({ message: 'login successful' });
         } catch (err) {
             console.log(err);
@@ -140,10 +133,15 @@ router.get('/logout', (req, res) => {
 
 router.get('/isloggedin', (req, res) => {
     if (req.session.user) {
-        res.status(200).json({ isLoggedIn: true });
+        // res.status(200).json({ isLoggedIn: true });
+        res.status(200).json({ isLoggedIn: true, user: req.session.user });
     } else {
-        res.status(200).json({ isLoggedIn: false });
+        res.status(200).json({ isLoggedIn: false, user: null });
     }
+});
+
+router.get('/session', (req, res) => {
+    res.status(200).json(req.session);
 });
 
 module.exports = router;

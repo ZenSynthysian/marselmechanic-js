@@ -1,13 +1,33 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Register() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [resData, setResData] = useState(null);
     const [formData, setFormData] = useState({
         email: '',
         username: '',
         password: '',
     });
+
+    const getStatus = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/isLoggedIn`, { withCredentials: true });
+            if (!response.status === 200) {
+                console.error('gagal mengambil data');
+            } else {
+                setIsLoggedIn(response.data.user);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        getStatus();
+    }, []);
+
+    isLoggedIn ? window.location.replace('/') : false;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -16,30 +36,30 @@ function Register() {
             [name]: value,
         }));
     };
-
     async function handleSubmit(e) {
         e.preventDefault();
         try {
             const sendData = async () => {
                 const data = {
-                    email: formData.email,
-                    username: formData.username,
-                    password: formData.password,
+                    email: formData?.email,
+                    username: formData?.username,
+                    password: formData?.password,
                 };
 
                 const response = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/accounts/register`, data);
-                if (!response.status === 200) {
+                if (!response?.status === 200) {
                     console.error('gagal mengirim data');
                 } else {
-                    setResData('registrasi sukses');
+                    // setResData('registrasi sukses');
+                    window.location.replace('/login');
                 }
-                console.log(response.status);
+                console.log(response?.status);
             };
 
             await sendData();
         } catch (err) {
             if (err) {
-                setResData(err.response.data.error);
+                setResData(err?.response?.data?.error);
             } else {
                 console.log('register sukses');
             }

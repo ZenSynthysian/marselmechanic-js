@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function Login() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -8,6 +8,25 @@ function Login() {
         username: '',
         password: '',
     });
+
+    const getStatus = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/isLoggedIn`, { withCredentials: true });
+            if (!response.status === 200) {
+                console.error('gagal mengambil data');
+            } else {
+                setIsLoggedIn(response.data.user);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        getStatus();
+    }, []);
+
+    isLoggedIn ? window.location.replace('/') : false;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,31 +45,20 @@ function Login() {
                     password: formData.password,
                 };
 
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/accounts/login`, data);
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/accounts/login`, data, { withCredentials: true });
                 if (!response.status === 200) {
                     console.error('gagal mengirim data');
                 } else {
-                    setResData('Login sukses');
+                    // setResData(response.data.message);
+                    window.location.replace('/');
                 }
                 console.log(response.status);
             };
 
-            const getLogin = async () => {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/isloggedin`);
-                if (!response.status === 200) {
-                    console.error('gagal mengirim data');
-                } else {
-                    setIsLoggedIn(response.data.isLoggedIn);
-                }
-                console.log(isLoggedIn);
-            };
             sendData();
-            getLogin();
         } catch (err) {
             if (err) {
                 setResData(err.response.data.error);
-            } else {
-                console.log('Login sukses');
             }
         }
     }

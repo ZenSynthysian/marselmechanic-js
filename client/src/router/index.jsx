@@ -3,6 +3,7 @@ import Home from './../page/Home';
 import Layout from './../layout/Layout';
 import Login from '../page/Login';
 import Register from '../page/Register';
+import Store from '../page/Store';
 
 export const router = createBrowserRouter([
     {
@@ -20,6 +21,16 @@ export const router = createBrowserRouter([
             {
                 path: 'register',
                 element: <Register />,
+            },
+            {
+                path: 'store',
+                element: <Store />,
+                // children: [
+                //     {
+                //         path: 'keranjang',
+                //         element: <Home />,
+                //     },
+                // ],
             },
         ],
     },

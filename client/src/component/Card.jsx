@@ -8,7 +8,7 @@ function Card({ nama, harga, foto }) {
 
     useEffect(() => {
         async function checkLoggedIn() {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/isloggedin`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/isloggedin`, { withCredentials: true });
             setIsLoggedIn(response.data.isLoggedIn);
         }
         checkLoggedIn();

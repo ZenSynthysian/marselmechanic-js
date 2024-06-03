@@ -4,12 +4,11 @@ import axios from 'axios';
 
 function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
     useEffect(() => {
         const url = `${import.meta.env.VITE_API_URL}/rest/api/accounts/isloggedin`;
         const checkLoggedIn = async () => {
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(url, { withCredentials: true });
                 setIsLoggedIn(response.data.isLoggedIn);
             } catch (err) {
                 console.error(err);
@@ -18,6 +17,20 @@ function Navbar() {
 
         checkLoggedIn();
     }, []);
+
+    const logout = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/logout`, { withCredentials: true });
+            if (!response.status === 200) {
+                console.error('gagal logout');
+            } else {
+                setIsLoggedIn(false);
+                window.location.replace('/');
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     return (
         <>
@@ -46,9 +59,9 @@ function Navbar() {
                             </Link>
                         </>
                     ) : (
-                        <Link to={'/logout'}>
+                        <button onClick={logout}>
                             <span className=" hover:text-[#FEEFAD]">SignOut</span>
-                        </Link>
+                        </button>
                     )}
                 </div>
             </div>
