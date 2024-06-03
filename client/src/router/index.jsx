@@ -4,6 +4,7 @@ import Layout from './../layout/Layout';
 import Login from '../page/Login';
 import Register from '../page/Register';
 import Store from '../page/Store';
+import StoreIndex from '../page/StoreIndex';
 
 export const router = createBrowserRouter([
     {
@@ -25,12 +26,16 @@ export const router = createBrowserRouter([
             {
                 path: 'store',
                 element: <Store />,
-                // children: [
-                //     {
-                //         path: 'keranjang',
-                //         element: <Home />,
-                //     },
-                // ],
+                children: [
+                    {
+                        path: '/store',
+                        element: <StoreIndex />,
+                    },
+                    {
+                        path: 'keranjang',
+                        element: <Home />,
+                    },
+                ],
             },
         ],
     },

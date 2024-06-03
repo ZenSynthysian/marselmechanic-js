@@ -26,7 +26,7 @@ function Login() {
         getStatus();
     }, []);
 
-    isLoggedIn ? window.location.replace('/') : false;
+    isLoggedIn ? window.location.replace('/store') : false;
 
     const handleChange = (e) => {
         const { name, value } = e.target;

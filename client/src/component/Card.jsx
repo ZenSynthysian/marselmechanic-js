@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-function Card({ nama, harga, foto }) {
+function Card({ nama, harga, foto, id }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
@@ -14,12 +14,21 @@ function Card({ nama, harga, foto }) {
         checkLoggedIn();
     }, []);
 
+    function handlePlus() {
+        const element = document.getElementById(id);
+        if (element) {
+            let elementValue = parseInt(element.innerText);
+            elementValue += 1;
+            element.innerHTML = elementValue;
+        }
+    }
+
     return (
         <div className="border-2 rounded-xl flex flex-col mb-3 w-52">
             <div className="bg-deepdark text-lightwhite h-16 text-center justify-center items-center flex">
                 <span className="truncate pl-3">{nama}</span>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center bg-white">
                 <img
                     src={foto}
                     alt={nama}
@@ -42,8 +51,16 @@ function Card({ nama, harga, foto }) {
                     <button className="bg-lightyellow text-deepdark p-1 rounded-full">Buy Now</button>
                     <button className="text-lightwhite transition-all delay-100 ease-in-out p-1 rounded-lg border-lightyellow hover:border">Cart</button>
                     <button className="text-lightwhite hover:text-lightyellow">-</button>
-                    <span className="text-lightwhite">0</span>
-                    <button className="text-lightwhite hover:text-lightyellow">+</button>
+                    <span
+                        className="text-lightwhite"
+                        id={id}>
+                        0
+                    </span>
+                    <button
+                        className="text-lightwhite hover:text-lightyellow"
+                        onClick={handlePlus}>
+                        +
+                    </button>
                 </div>
             )}
         </div>
@@ -54,6 +71,7 @@ Card.propTypes = {
     nama: PropTypes.string,
     harga: PropTypes.number,
     foto: PropTypes.string,
+    id: PropTypes.number,
 };
 
 export default Card;
