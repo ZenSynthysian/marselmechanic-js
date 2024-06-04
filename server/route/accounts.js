@@ -64,9 +64,12 @@ router.post('/register', (req, res) => {
 
             const checkEmailQuery = `SELECT * FROM accounts WHERE email = '${email}'`;
             const emailData = await new Promise((resolve, reject) => {
-                db.query(checkEmailQuery, (err, res) => {
-                    if (err) reject(new Error('Fail to fetch accounts'));
-                    resolve(res);
+                db.query(checkEmailQuery, (err, result) => {
+                    if (err) {
+                        reject(new Error('Fail to fetch accounts'));
+                        res.status(400).send(err.message || err);
+                    }
+                    resolve(result);
                 });
             });
             if (emailData.length > 0) {

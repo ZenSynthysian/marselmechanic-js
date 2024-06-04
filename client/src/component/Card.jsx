@@ -35,6 +35,14 @@ function Card({ nama, harga, foto, id }) {
         }
     }
 
+    async function handleSubmit(){
+        try {
+            const response = await axios.post()
+        } catch (err) {
+            
+        }
+    }
+
     return (
         <div className="border-2 rounded-xl flex flex-col mb-3 w-52">
             <div className="bg-deepdark text-lightwhite h-16 text-center justify-center items-center flex">

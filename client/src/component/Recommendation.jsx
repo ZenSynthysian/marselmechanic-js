@@ -21,7 +21,7 @@ function Recommendation() {
                     {products.map((product) => {
                         return (
                             <Card
-                                key={product.id}
+                                id={product.id}
                                 nama={product.nama}
                                 foto={product.foto}
                                 harga={product.harga}
