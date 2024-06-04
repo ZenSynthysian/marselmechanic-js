@@ -23,6 +23,18 @@ function Card({ nama, harga, foto, id }) {
         }
     }
 
+    function handleMinus(){
+        const element = document.getElementById(id);
+        if(element){
+            let elementValue = parseInt(element.innerText);
+            if (elementValue > 0){
+                elementValue -= 1;
+                element.innerHTML = elementValue;
+            }
+
+        }
+    }
+
     return (
         <div className="border-2 rounded-xl flex flex-col mb-3 w-52">
             <div className="bg-deepdark text-lightwhite h-16 text-center justify-center items-center flex">
@@ -50,7 +62,7 @@ function Card({ nama, harga, foto, id }) {
                 <div className="bg-deepdark h-16 flex flex-row gap-3 items-center p-2">
                     <button className="bg-lightyellow text-deepdark p-1 rounded-full">Buy Now</button>
                     <button className="text-lightwhite transition-all delay-100 ease-in-out p-1 rounded-lg border-lightyellow hover:border">Cart</button>
-                    <button className="text-lightwhite hover:text-lightyellow">-</button>
+                    <button className="text-lightwhite hover:text-lightyellow" onClick={handleMinus}>-</button>
                     <span
                         className="text-lightwhite"
                         id={id}>

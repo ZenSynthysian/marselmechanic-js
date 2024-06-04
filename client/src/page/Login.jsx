@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 function Login() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [resData, setResData] = useState(null);
+    const [resData, setResData] = useState('');
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -49,17 +49,17 @@ function Login() {
                 if (!response.status === 200) {
                     console.error('gagal mengirim data');
                 } else {
-                    // setResData(response.data.message);
-                    window.location.replace('/');
+                    if(response.data.error){
+                        setResData(response.data.error);
+                    }else{
+                        window.location.replace('/'); 
+                    }
                 }
-                console.log(response.status);
             };
 
             sendData();
         } catch (err) {
-            if (err) {
-                setResData(err.response.data.error);
-            }
+            console.error(err);
         }
     }
 
@@ -75,7 +75,7 @@ function Login() {
                             <form
                                 onSubmit={handleSubmit}
                                 className="flex flex-col justify-center items-center gap-3 pt-9 pb-9">
-                                {resData == 'registrasi sukses' ? <span className="text-green">Login sukses</span> : <span className="text-red">{resData}</span>}
+                                {resData == 'login successful' ? <span className="text-green">Login sukses</span> : <span className="text-red">{resData}</span>}
                                 <input
                                     onChange={(e) => handleChange(e)}
                                     className="p-2 rounded-full border-2 w-96 hover:border-lightyellow placeholder:text-center text-center  outline-none"

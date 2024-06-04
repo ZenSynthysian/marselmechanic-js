@@ -109,7 +109,7 @@ router.post('/login', (req, res) => {
                         reject(new Error('Fail to fetch accounts'));
                     } else {
                         if (!response[0]) {
-                            return res.status(400).json({ error: 'Invalid username or password' });
+                            return res.status(200).json({ error: 'Invalid username or password' });
                         }
                         resolve(response);
                     }
