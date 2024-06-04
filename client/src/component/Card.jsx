@@ -7,6 +7,7 @@ function Card({ nama, harga, foto, id }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [elementValue, setElementValue] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [isClicked, setIsClicked] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -66,6 +67,10 @@ function Card({ nama, harga, foto, id }) {
             };
 
             await sendData();
+            setIsClicked(true);
+            setTimeout(() => {
+                setIsClicked(false);
+            }, 2000);
         } catch (err) {
             console.log(err.message || err);
         }
@@ -157,7 +162,7 @@ function Card({ nama, harga, foto, id }) {
                     <button
                         className="text-lightwhite transition-all delay-100 ease-in-out p-1 rounded-lg border-lightyellow hover:border"
                         onClick={handleSubmit}>
-                        Cart
+                        {isClicked ? 'O' : 'Cart'}
                     </button>
                     <button
                         className="text-lightwhite hover:text-lightyellow"
