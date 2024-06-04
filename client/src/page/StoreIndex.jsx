@@ -34,7 +34,7 @@ function StoreIndex() {
                                     nama={product.nama}
                                     harga={product.harga}
                                     foto={product.foto}
-                                    id={parseInt(product.id)}
+                                    id={product.id}
                                 />
                             );
                         })}

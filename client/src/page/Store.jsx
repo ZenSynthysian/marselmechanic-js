@@ -5,7 +5,6 @@ import cartPNG from './../assets/cart.png';
 
 function Store() {
     const [status, setStatus] = useState({});
-    const [products, setProducts] = useState([]);
 
     const getStatus = async () => {
         try {
@@ -20,22 +19,8 @@ function Store() {
         }
     };
 
-    const getProducts = async () => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/spareparts/get`, { withCredentials: true });
-            if (!response.status === 200) {
-                console.error('gagal mengambil data');
-            } else {
-                setProducts(response.data);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
     useEffect(() => {
         getStatus();
-        getProducts();
     }, []);
 
     return (

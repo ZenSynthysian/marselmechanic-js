@@ -18,9 +18,10 @@ function Recommendation() {
             <div className="text-center text-2xl">Our Product Recommendation</div>
             <div className="flex justify-center pt-8">
                 <div className="columns-4 w-[1000px]">
-                    {products.map((product) => {
+                    {products.map((product, index) => {
                         return (
                             <Card
+                                key={index}
                                 id={product.id}
                                 nama={product.nama}
                                 foto={product.foto}

@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/rest/api/spareparts', require('./route/sparepart'));
 app.use('/rest/api/accounts', require('./route/accounts'));
-app.use('/rest/api/cart', require('./route/cart'))
+app.use('/rest/api/cart', require('./route/cart'));
 
 app.listen(port, () => {
     console.log('listening on port ' + port);
