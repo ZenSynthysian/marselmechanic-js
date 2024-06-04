@@ -4,7 +4,6 @@ import Card from '../component/Card';
 
 function StoreIndex() {
     const [products, setProducts] = useState([]);
-
     const getProducts = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/spareparts/get`, { withCredentials: true });

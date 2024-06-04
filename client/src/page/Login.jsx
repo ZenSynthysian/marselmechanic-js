@@ -49,10 +49,10 @@ function Login() {
                 if (!response.status === 200) {
                     console.error('gagal mengirim data');
                 } else {
-                    if(response.data.error){
+                    if (response.data.error) {
                         setResData(response.data.error);
-                    }else{
-                        window.location.replace('/'); 
+                    } else {
+                        window.location.replace('/');
                     }
                 }
             };

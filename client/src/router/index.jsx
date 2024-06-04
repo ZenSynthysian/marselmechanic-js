@@ -5,6 +5,7 @@ import Login from '../page/Login';
 import Register from '../page/Register';
 import Store from '../page/Store';
 import StoreIndex from '../page/StoreIndex';
+import Cart from '../page/Cart';
 
 export const router = createBrowserRouter([
     {
@@ -33,7 +34,7 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'keranjang',
-                        element: <Home />,
+                        element: <Cart />,
                     },
                 ],
             },

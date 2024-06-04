@@ -15,7 +15,7 @@ router.post('/insert', (req, res) => {
             const query = `select id from accounts where username = '${user}'`;
             const data = await new Promise((resolve, reject) => {
                 db.query(query, (err, result) => {
-                    if (err) res.status(400).send(err.message || err);
+                    if (err) res.status(400).send(`getting user id error: ${err.message || err}`);
                     resolve(result[0]);
                 });
             });
@@ -23,7 +23,7 @@ router.post('/insert', (req, res) => {
             id = data.id;
         } catch (err) {
             if (err) {
-                res.status(400).send(err.message || err);
+                res.status(400).send(`getting user id error: ${err.message || err}`);
             }
         }
 
@@ -147,6 +147,77 @@ router.post('/amount/account/get', async (req, res) => {
     } catch (err) {
         // res.status(500).send(err.message || err);
         console.error(err.message);
+    }
+});
+
+router.post('/account/getall', async (req, res) => {
+    try {
+        const { user } = req?.body;
+        let userId;
+
+        const userData = await new Promise((resolve, reject) => {
+            const query = `SELECT id FROM accounts WHERE username = ?`;
+            db.query(query, [user], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result[0]);
+            });
+        });
+
+        userId = userData.id;
+
+        const cartData = await new Promise((resolve, reject) => {
+            const query = `SELECT * FROM carts WHERE id_account = ?`;
+            db.query(query, [userId], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+
+        res.status(200).send(cartData);
+    } catch (err) {
+        console.log(err.message || err);
+    }
+});
+
+router.post('/account/get/value', async (req, res) => {
+    try {
+        const { user } = req?.body;
+        let userId;
+
+        const userData = await new Promise((resolve, reject) => {
+            const query = `SELECT id FROM accounts WHERE username = ?`;
+            db.query(query, [user], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result[0]);
+            });
+        });
+
+        userId = userData.id;
+
+        const cartData = await new Promise((resolve, reject) => {
+            const query = `SELECT * FROM carts WHERE id_account = ?`;
+            db.query(query, [userId], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+
+        let productId = [];
+        cartData.map((item) => {
+            productId.push(item.id_sparepart);
+        });
+
+        const getProduct = await new Promise((resolve, reject) => {
+            const query = `SELECT * FROM sparepart WHERE id IN (?)`;
+            db.query(query, [productId], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+
+        res.status(200).send(getProduct);
+    } catch (err) {
+        console.log(err.message || err);
     }
 });
 
