@@ -7,6 +7,7 @@ import Store from '../page/Store';
 import StoreIndex from '../page/StoreIndex';
 import Cart from '../page/Cart';
 import CheckOut from '../page/CheckOut';
+import SingleCheckOut from '../page/SingleCheckOut';
 
 export const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
                     {
                         path: 'checkout',
                         element: <CheckOut />,
+                    },
+                    {
+                        path: 'singlecheckout',
+                        element: <SingleCheckOut />,
                     },
                 ],
             },

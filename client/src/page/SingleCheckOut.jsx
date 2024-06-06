@@ -1,10 +1,10 @@
 import WelcomeBanner from '../component/WelcomeBanner';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
-function CheckOut() {
-    const [cart, setCart] = useState([]);
-    const [products, setProducts] = useState([]);
+function SingleCheckOut() {
+    // const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalHarga, setTotalHarga] = useState(0);
     const [metodePembayaran, setMetodePembayaran] = useState('');
@@ -12,6 +12,10 @@ function CheckOut() {
     const [namaDepan, setNamaDepan] = useState('');
     const [namaBelakang, setNamaBelakang] = useState('');
     const [nomorKartu, setNomorKartu] = useState('');
+    let {
+        state: { products },
+    } = useLocation();
+    const arrayProducts = [products];
 
     useEffect(() => {
         async function fetchData() {
@@ -20,22 +24,22 @@ function CheckOut() {
                 if (responseLoggedIn.data.isLoggedIn === false) window.location.replace('/login');
 
                 if (responseLoggedIn.data.isLoggedIn) {
-                    const data = {
-                        user: responseLoggedIn.data.user,
-                    };
+                    // const data = {
+                    //     user: responseLoggedIn.data.user,
+                    // };
                     setUserData(responseLoggedIn.data.user);
 
-                    const responseGetCart = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/cart/account/getall`, data, { withCredentials: true });
-                    if (responseGetCart.status === 200 && responseGetCart.data) {
-                        setCart(responseGetCart.data);
-                    }
+                    // const responseGetCart = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/cart/account/getall`, data, { withCredentials: true });
+                    // if (responseGetCart.status === 200 && responseGetCart.data) {
+                    //     setCart(responseGetCart.data);
+                    // }
 
-                    const responseProducts = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/cart/account/get/value`, data, { withCredentials: true });
-                    if (responseProducts.status === 200 && responseProducts.data) {
-                        setProducts(responseProducts.data);
-                        calculateTotalHarga(responseProducts.data, responseGetCart.data);
-                        setLoading(false);
-                    }
+                    // const responseProducts = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/cart/account/get/value`, data, { withCredentials: true });
+                    // if (responseProducts.status === 200 && responseProducts.data) {
+                    //     setProducts(responseProducts.data);
+                    //     calculateTotalHarga(responseProducts.data, responseGetCart.data);
+                    //     setLoading(false);
+                    // }
 
                     setLoading(false);
                 }
@@ -62,15 +66,9 @@ function CheckOut() {
         setNamaBelakang(e.target.value);
     };
 
-    const calculateTotalHarga = (products, cart) => {
-        let total = 0;
-        products.forEach((product, index) => {
-            total += product.harga * cart[index].amount;
-        });
-
-        setTotalHarga(total);
-    };
-
+    useEffect(() => {
+        setTotalHarga(products.harga * products.jumlah);
+    }, [products]);
     const checkout = async () => {
         try {
             const data = {
@@ -80,6 +78,8 @@ function CheckOut() {
                 nomorKartu: nomorKartu,
                 namaDepan: namaDepan,
                 namaBelakang: namaBelakang,
+                idCart: products.cartId,
+                singleProductId: products.Id,
             };
             const responseCheckout = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/cart/account/pay`, data, { withCredentials: true });
             if (responseCheckout.status === 200 && responseCheckout.data) {
@@ -109,7 +109,7 @@ function CheckOut() {
                             </div>
                         </div>
                         <div className="space-y-1 ">
-                            {products.map((product, index) => {
+                            {arrayProducts.map((product, index) => {
                                 return (
                                     <div
                                         key={index}
@@ -117,14 +117,15 @@ function CheckOut() {
                                         <div className="flex w-[530px] justify-between">
                                             <div className="truncate border-r-2 border-l-2 w-10 pl-1">{index + 1}</div>
                                             <div className="truncate border-r-2 border-l-2 w-80 text-center pl-3">{product.nama} </div>
-                                            <div className="truncate border-r-2 border-l-2 w-32 text-center ">{cart[index].amount}</div>
+                                            <div className="truncate border-r-2 border-l-2 w-32 text-center ">{product.jumlah}</div>
                                         </div>
                                         <div>
-                                            <div className="truncate border-r-2 w-64 text-end pr-3">Rp. {product.harga * cart[index].amount}</div>
+                                            <div className="truncate border-r-2 w-64 text-end pr-3">Rp. {product.harga * product.jumlah}</div>
                                         </div>
                                     </div>
                                 );
                             })}
+
                             <hr />
                             <div className="flex flex-row justify-between text-xl p-3 ">
                                 <div>Total: </div>
@@ -227,4 +228,4 @@ function CheckOut() {
     );
 }
 
-export default CheckOut;
+export default SingleCheckOut;

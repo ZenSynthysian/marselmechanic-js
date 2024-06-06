@@ -227,7 +227,7 @@ router.post('/account/get/value', async (req, res) => {
 
 router.post('/account/pay', async (req, res) => {
     try {
-        const { user, totalHarga, metodePembayaran, nomorKartu, namaDepan, namaBelakang } = req?.body;
+        const { user, totalHarga, metodePembayaran, nomorKartu, namaDepan, namaBelakang, idCart = null, singleProductId = null } = req?.body;
 
         const userData = await new Promise((resolve, reject) => {
             const query = `SELECT id FROM accounts WHERE username = ?`;
@@ -236,7 +236,6 @@ router.post('/account/pay', async (req, res) => {
                 resolve(result[0]);
             });
         });
-
         const userId = userData.id;
 
         const cartData = await new Promise((resolve, reject) => {
@@ -246,28 +245,51 @@ router.post('/account/pay', async (req, res) => {
                 resolve(result);
             });
         });
-
         const productId = cartData.map((item) => item.id_sparepart);
         const productIdJson = JSON.stringify(productId);
         const dateNow = new Date();
 
-        const insertData = await new Promise((resolve, reject) => {
-            const query = `INSERT INTO history (id_account, products, harga, metode, nomor_kartu, nama_depan, nama_belakang, tanggal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.query(query, [userId, productIdJson, totalHarga, metodePembayaran, nomorKartu, namaDepan, namaBelakang, dateNow], (err, result) => {
-                if (err) res.status(400).send(err.message || err);
-                resolve(result);
+        // check cartId
+        if (idCart !== null && singleProductId !== null) {
+            const insertData = await new Promise((resolve, reject) => {
+                const query = `INSERT INTO history (id_account, products, harga, metode, nomor_kartu, nama_depan, nama_belakang, tanggal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+                db.query(query, [userId, singleProductId, totalHarga, metodePembayaran, nomorKartu, namaDepan, namaBelakang, dateNow], (err, result) => {
+                    if (err) res.status(400).send(err.message || err);
+                    resolve(result);
+                });
             });
-        });
-
-        const flushData = await new Promise((resolve, reject) => {
-            const query = `DELETE FROM carts WHERE id_account = ? AND id_sparepart IN (${productId})`;
-            db.query(query, [userId], (err, result) => {
-                if (err) res.status(400).send(err.message || err);
-                resolve(result);
+        } else {
+            const insertData = await new Promise((resolve, reject) => {
+                const query = `INSERT INTO history (id_account, products, harga, metode, nomor_kartu, nama_depan, nama_belakang, tanggal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+                db.query(query, [userId, productIdJson, totalHarga, metodePembayaran, nomorKartu, namaDepan, namaBelakang, dateNow], (err, result) => {
+                    if (err) res.status(400).send(err.message || err);
+                    resolve(result);
+                });
             });
-        });
+        }
 
-        res.status(200).send({ message: 'Pembelian Berhasil' });
+        // check if single
+        if (idCart !== null) {
+            const flushSingleData = await new Promise((resolve, reject) => {
+                const query = `DELETE FROM carts WHERE id_account = ? AND id = ?`;
+                db.query(query, [userId, idCart], (err, result) => {
+                    if (err) res.status(400).send(err.message || err);
+                    resolve(result);
+                });
+            });
+
+            res.status(200).send({ message: 'Pembelian Berhasil' });
+        } else {
+            const flushData = await new Promise((resolve, reject) => {
+                const query = `DELETE FROM carts WHERE id_account = ? AND id_sparepart IN (${productId})`;
+                db.query(query, [userId], (err, result) => {
+                    if (err) res.status(400).send(err.message || err);
+                    resolve(result);
+                });
+            });
+
+            res.status(200).send({ message: 'Pembelian Berhasil' });
+        }
     } catch (err) {
         console.log(err.message || err);
     }

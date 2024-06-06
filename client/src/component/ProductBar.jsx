@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-function ProductBar({ nama, harga, foto, id, list, jumlah }) {
+function ProductBar({ nama, harga, foto, id, list, jumlah, cartId }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [elementValue, setElementValue] = useState(0);
 
@@ -103,9 +104,12 @@ function ProductBar({ nama, harga, foto, id, list, jumlah }) {
                                         {'>'}
                                     </button>
                                 </div>
-                                <button className="transition-all h-full group-hover:bg-deepdark hover:text-lightwhite text-lightyellow group-hover/d1:w-full w-0 flex justify-center items-center invisible group-hover/d1:visible">
-                                    {'=>'}
-                                </button>
+                                <Link
+                                    to="/store/singlecheckout"
+                                    state={{ products: { id, nama, harga, foto, jumlah, cartId } }}
+                                    className="transition-all h-full group-hover:bg-deepdark hover:text-lightwhite text-lightyellow group-hover/d1:w-full w-0 flex justify-center items-center invisible group-hover/d1:visible">
+                                    <button>{'=>'}</button>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -122,6 +126,7 @@ ProductBar.propTypes = {
     id: PropTypes.string,
     list: PropTypes.any,
     jumlah: PropTypes.number,
+    cartId: PropTypes.any,
 };
 
 export default ProductBar;
