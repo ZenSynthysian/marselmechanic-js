@@ -6,6 +6,7 @@ import Register from '../page/Register';
 import Store from '../page/Store';
 import StoreIndex from '../page/StoreIndex';
 import Cart from '../page/Cart';
+import CheckOut from '../page/CheckOut';
 
 export const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
                     {
                         path: 'keranjang',
                         element: <Cart />,
+                    },
+                    {
+                        path: 'checkout',
+                        element: <CheckOut />,
                     },
                 ],
             },

@@ -27,7 +27,9 @@ router.post('/insert', (req, res) => {
             }
         }
 
-        // insert product
+        // // insert product
+
+        // get count
         let counter;
         try {
             const query = 'select COUNT(*) as count from carts';
@@ -208,14 +210,64 @@ router.post('/account/get/value', async (req, res) => {
         });
 
         const getProduct = await new Promise((resolve, reject) => {
-            const query = `SELECT * FROM sparepart WHERE id IN (?)`;
-            db.query(query, [productId], (err, result) => {
+            const placeholder = productId.map(() => '?').join(', ');
+
+            const query = `SELECT * FROM sparepart WHERE id IN (${placeholder}) ORDER BY FIELD(id, ${productId.join(', ')})`;
+            db.query(query, productId, (err, result) => {
                 if (err) res.status(400).send(err.message || err);
                 resolve(result);
             });
         });
 
         res.status(200).send(getProduct);
+    } catch (err) {
+        console.log(err.message || err);
+    }
+});
+
+router.post('/account/pay', async (req, res) => {
+    try {
+        const { user, totalHarga, metodePembayaran, nomorKartu, namaDepan, namaBelakang } = req?.body;
+
+        const userData = await new Promise((resolve, reject) => {
+            const query = `SELECT id FROM accounts WHERE username = ?`;
+            db.query(query, [user], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result[0]);
+            });
+        });
+
+        const userId = userData.id;
+
+        const cartData = await new Promise((resolve, reject) => {
+            const query = `SELECT * FROM carts WHERE id_account = ?`;
+            db.query(query, [userId], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+
+        const productId = cartData.map((item) => item.id_sparepart);
+        const productIdJson = JSON.stringify(productId);
+        const dateNow = new Date();
+
+        const insertData = await new Promise((resolve, reject) => {
+            const query = `INSERT INTO history (id_account, products, harga, metode, nomor_kartu, nama_depan, nama_belakang, tanggal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+            db.query(query, [userId, productIdJson, totalHarga, metodePembayaran, nomorKartu, namaDepan, namaBelakang, dateNow], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+
+        const flushData = await new Promise((resolve, reject) => {
+            const query = `DELETE FROM carts WHERE id_account = ? AND id_sparepart IN (${productId})`;
+            db.query(query, [userId], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+
+        res.status(200).send({ message: 'Pembelian Berhasil' });
     } catch (err) {
         console.log(err.message || err);
     }
