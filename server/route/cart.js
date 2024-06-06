@@ -1,6 +1,7 @@
 const db = require('./../helper/sql');
 const express = require('express');
 const session = require('express-session');
+const formatDateTime = require('../helper/formatDateTime');
 require('dotenv');
 
 const router = express.Router();
@@ -247,7 +248,7 @@ router.post('/account/pay', async (req, res) => {
         });
         const productId = cartData.map((item) => item.id_sparepart);
         const productIdJson = JSON.stringify(productId);
-        const dateNow = new Date();
+        const dateNow = formatDateTime();
 
         // check cartId
         if (idCart !== null && singleProductId !== null) {
@@ -290,6 +291,30 @@ router.post('/account/pay', async (req, res) => {
 
             res.status(200).send({ message: 'Pembelian Berhasil' });
         }
+    } catch (err) {
+        console.log(err.message || err);
+    }
+});
+
+router.post('/account/history', async (req, res) => {
+    try {
+        const { user } = req?.body;
+        const userData = await new Promise((resolve, reject) => {
+            const query = `SELECT id FROM accounts WHERE username = ?`;
+            db.query(query, [user], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result[0]);
+            });
+        });
+        const userId = userData.id;
+        const historyData = await new Promise((resolve, reject) => {
+            const query = `SELECT * FROM history WHERE id_account = ?`;
+            db.query(query, [userId], (err, result) => {
+                if (err) res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+        res.status(200).send(historyData);
     } catch (err) {
         console.log(err.message || err);
     }

@@ -67,26 +67,28 @@ function Cart() {
                         </>
                     }
                 />
-                <div className="border-t-4 border-dotted hover:border-solid p-5">
-                    <a href="/store/checkout">
-                        <button className="transition-all delay-75 ease-in-out border-solid border-2 rounded-lg h-12 p-2 w-full hover:bg-deepdark hover:text-lightyellow">CheckOut</button>
-                    </a>
-                </div>
-                <div className="">
-                    {products.map((product, index) => {
-                        return (
-                            <ProductBar
-                                key={index}
-                                nama={product.nama}
-                                foto={product.foto}
-                                harga={product.harga}
-                                id={product.id}
-                                cartId={cart[index].id}
-                                list={index + 1}
-                                jumlah={cart[index].amount}
-                            />
-                        );
-                    })}
+                <div className="border-t-4 border-dotted hover:border-solid">
+                    <div className="p-5">
+                        <a href="/store/checkout">
+                            <button className="transition-all delay-75 ease-in-out border-solid border-2 rounded-lg h-12 p-2 w-full hover:bg-deepdark hover:text-lightyellow">CheckOut</button>
+                        </a>
+                    </div>
+                    <div className="">
+                        {products.map((product, index) => {
+                            return (
+                                <ProductBar
+                                    key={index}
+                                    nama={product.nama}
+                                    foto={product.foto}
+                                    harga={product.harga}
+                                    id={product.id}
+                                    cartId={cart[index].id}
+                                    list={index + 1}
+                                    jumlah={cart[index].amount}
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
             </>
         );

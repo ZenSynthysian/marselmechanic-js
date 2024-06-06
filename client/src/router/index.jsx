@@ -8,6 +8,8 @@ import StoreIndex from '../page/StoreIndex';
 import Cart from '../page/Cart';
 import CheckOut from '../page/CheckOut';
 import SingleCheckOut from '../page/SingleCheckOut';
+import History from '../page/History';
+import DetailHistory from '../page/DetailHistory';
 
 export const router = createBrowserRouter([
     {
@@ -45,6 +47,14 @@ export const router = createBrowserRouter([
                     {
                         path: 'singlecheckout',
                         element: <SingleCheckOut />,
+                    },
+                    {
+                        path: 'history',
+                        element: <History />,
+                    },
+                    {
+                        path: 'history/detail',
+                        element: <DetailHistory />,
                     },
                 ],
             },

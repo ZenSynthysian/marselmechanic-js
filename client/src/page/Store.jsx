@@ -31,6 +31,9 @@ function Store() {
                         <span>{`${status.user}`}</span>
                     </div>
                     <div className="flex pr-32 text-xl gap-10 ">
+                        <Link to={'/store/history'}>
+                            <span>History</span>
+                        </Link>
                         <Link to={'/store/keranjang'}>
                             <img
                                 src={cartPNG}
