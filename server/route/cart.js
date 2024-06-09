@@ -29,23 +29,6 @@ router.post('/insert', (req, res) => {
         }
 
         // // insert product
-
-        // get count
-        let counter;
-        try {
-            const query = 'select COUNT(*) as count from carts';
-            const data = await new Promise((resolve, reject) => {
-                db.query(query, (err, result) => {
-                    if (err) res.status(400).send(err.message || err);
-                    resolve(result[0].count);
-                });
-            });
-
-            counter = parseInt(data) + 1;
-        } catch (err) {
-            console.log(err.message || err);
-        }
-
         // validate cart
         let status;
         try {
@@ -85,7 +68,7 @@ router.post('/insert', (req, res) => {
                 }
             } else {
                 try {
-                    const query = `INSERT INTO carts (id, id_account, id_sparepart, amount) VALUES (${counter}, ${id}, ${idSparepart}, ${amount})`;
+                    const query = `INSERT INTO carts (id_account, id_sparepart, amount) VALUES (${id}, ${idSparepart}, ${amount})`;
                     const data = await new Promise((resolve, reject) => {
                         db.query(query, (err, result) => {
                             if (err) res.status(400).send(err.message || err);
@@ -317,6 +300,38 @@ router.post('/account/history', async (req, res) => {
         res.status(200).send(historyData);
     } catch (err) {
         console.log(err.message || err);
+    }
+});
+
+router.get('/history/get/:limit', async (req, res) => {
+    try {
+        const { limit } = req.params;
+        const getHistoryData = await new Promise((resolve, reject) => {
+            const data = parseInt(limit);
+            const query = `SELECT * FROM history ORDER BY id DESC LIMIT ?`;
+            db.query(query, data, (err, result) => {
+                if (err) res.status(400).send(`error on history get limit, query db: ${err.message || err}`);
+                resolve(result);
+            });
+        });
+        res.status(200).send(getHistoryData);
+    } catch (err) {
+        console.log(`Err on cart, history get limit: ${err.message || err}`);
+    }
+});
+
+router.get('/history/count/get', async (req, res) => {
+    try {
+        const getHistoryData = await new Promise((resolve, reject) => {
+            const query = `SELECT COUNT(*) as count FROM history`;
+            db.query(query, (err, result) => {
+                if (err) res.status(400).send(`error on history get limit, query db: ${err.message || err}`);
+                resolve(result);
+            });
+        });
+        res.status(200).send(getHistoryData);
+    } catch (err) {
+        console.log(`Err on cart, history get limit: ${err.message || err}`);
     }
 });
 

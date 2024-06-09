@@ -36,27 +36,7 @@ router.get('/get', (req, res) => {
 
 router.post('/register', (req, res) => {
     async function register() {
-        let counter;
-
         try {
-            const query = `
-            SELECT COUNT(*) as count from accounts
-        `;
-
-            let dataCount = await new Promise((resolve, reject) => {
-                db.query(query, (err, res) => {
-                    if (err) reject(new Error('Fail to fetch accounts'));
-                    resolve(res[0].count);
-                });
-            });
-            counter = dataCount;
-        } catch (err) {
-            console.log(err.message);
-        }
-
-        try {
-            let id = counter + 1;
-
             const { username, email, password } = req.body;
             if (!username || !email || !password) {
                 res.status(400).json({ error: 'Missing username, email or password' });
@@ -77,7 +57,7 @@ router.post('/register', (req, res) => {
                 return;
             }
 
-            const query = `INSERT INTO accounts (id, username, email, password) VALUES ('${id}', '${username}', '${email}', '${password}')`;
+            const query = `INSERT INTO accounts ( username, email, password) VALUES ( '${username}', '${email}', '${password}')`;
             const data = await new Promise((resolve, reject) => {
                 db.query(query, (err, response) => {
                     if (err) {
@@ -119,6 +99,22 @@ router.post('/login', (req, res) => {
                 });
             });
 
+            const setStatus = await new Promise((resolve, reject) => {
+                db.query(`UPDATE accounts SET status = 1 WHERE username = '${username}'`, (err, result) => {
+                    if (err) console.log(`error on accounts for set status = ${err.message || err}`);
+                    resolve(result);
+                });
+            });
+
+            const setRole = await new Promise((resolve, reject) => {
+                db.query(`SELECT role FROM accounts WHERE username = '${username}'`, (err, result) => {
+                    if (err) console.log(`error on accounts for set role = ${err.message || err}`);
+                    resolve(result);
+                });
+            });
+
+            req.session.role = setRole[0].role;
+            req.session.status = true;
             req.session.user = username; // Set session setelah query selesai
             res.status(200).json({ message: 'login successful' });
         } catch (err) {
@@ -130,6 +126,13 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
+    // set status
+    if (req.session.user) {
+        db.query(`UPDATE accounts SET status = 0 WHERE username = '${req.session.user}'`, (err, result) => {
+            if (err) console.log(`error on accounts for logout: ${err.message || err}`);
+        });
+    }
+
     req.session.destroy();
     res.status(200).json({ message: 'logged out successfully' });
 });
@@ -137,14 +140,30 @@ router.get('/logout', (req, res) => {
 router.get('/isloggedin', (req, res) => {
     if (req.session.user) {
         // res.status(200).json({ isLoggedIn: true });
-        res.status(200).json({ isLoggedIn: true, user: req.session.user });
+        res.status(200).json({ isLoggedIn: true, user: req.session.user, status: req.session.status, role: req.session.role });
     } else {
-        res.status(200).json({ isLoggedIn: false, user: null });
+        res.status(200).json({ isLoggedIn: false, user: null, status: false, role: null });
     }
 });
 
 router.get('/session', (req, res) => {
     res.status(200).json(req.session);
+});
+
+router.get('/get/online', async (req, res) => {
+    try {
+        const onlineData = await new Promise((resolve, reject) => {
+            const query = `SELECT COUNT(*) as count FROM accounts WHERE status = 1`;
+            db.query(query, (err, result) => {
+                if (err) res.status(400).send(`error on get online db query: ${err.message || err}`);
+                resolve(result);
+            });
+        });
+
+        res.status(200).send(onlineData);
+    } catch (err) {
+        console.error(`error on get online: ${err.message || err}`);
+    }
 });
 
 module.exports = router;

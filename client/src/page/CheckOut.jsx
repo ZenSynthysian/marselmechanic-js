@@ -71,7 +71,8 @@ function CheckOut() {
         setTotalHarga(total);
     };
 
-    const checkout = async () => {
+    const checkout = async (e) => {
+        e.preventDefault();
         try {
             const data = {
                 user: userData,
@@ -131,94 +132,106 @@ function CheckOut() {
                                 <div>Rp. {totalHarga}</div>
                             </div>
                         </div>
-                        <div className="flex flex-row justify-between">
-                            <div className="border-2 w-[40%] ">
-                                <div className="p-2 text-center text-xl bg-deepdark text-lightyellow">Metode Pembayaran</div>
-                                <div className="delay-100 ease-in-out flex flex-col justify-center items-center p-3 gap-3">
-                                    <label
-                                        className={`${
-                                            metodePembayaran === 'kartukredit' ? 'bg-deepdark text-lightyellow' : 'bg-lightwhite'
-                                        } flex flex-row items-center h-10 border-2 rounded-lg justify-between w-full pl-3 pr-8`}>
-                                        <input
-                                            type="radio"
-                                            id="kartukredit"
-                                            name="metode"
-                                            value={'kartukredit'}
-                                            onClick={handleMetodePembayaran}
-                                            className="transition-all border w-3 h-3 rounded-full checked:bg-lightyellow appearance-none"
-                                        />
-                                        <div>Kartu Kredit</div>
-                                    </label>
-                                    <label
-                                        className={`${
-                                            metodePembayaran === 'kartudebit' ? 'bg-deepdark text-lightyellow' : 'bg-lightwhite'
-                                        } flex flex-row items-center  h-10 border-2 rounded-lg justify-between w-full pl-3 pr-8`}>
-                                        <input
-                                            type="radio"
-                                            name="metode"
-                                            id="kartudebit"
-                                            value={'kartudebit'}
-                                            onClick={handleMetodePembayaran}
-                                            className="transition-all border w-3 h-3 rounded-full checked:bg-lightyellow appearance-none"
-                                        />
-                                        <div>Kartu Debit</div>
-                                    </label>
-                                    <label
-                                        className={`${
-                                            metodePembayaran === 'PayPal' ? 'bg-deepdark text-lightyellow' : 'bg-lightwhite'
-                                        } flex flex-row items-center  h-10 border-2 rounded-lg justify-between w-full pl-3 pr-8`}>
-                                        {' '}
-                                        <input
-                                            type="radio"
-                                            name="metode"
-                                            id="PayPal"
-                                            value={'PayPal'}
-                                            onClick={handleMetodePembayaran}
-                                            className="transition-all border w-3 h-3 rounded-full checked:bg-lightyellow appearance-none"
-                                        />
-                                        <div>PayPal</div>
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="w-[50%]">
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Masukkan Nomor Kartu"
-                                        onChange={handleNomorKartu}
-                                        className="w-full placeholder:text-center outline-none border-b-2 focus:border-lightyellow"
-                                    />
-                                    <div className="grid grid-cols-2 gap-2 pb-8">
-                                        <input
-                                            type="text"
-                                            placeholder="00/00"
-                                            className="outline-none border-b-2 focus:border-lightyellow"
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="CVV"
-                                            className="outline-none border-b-2 focus:border-lightyellow"
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Nama Depan"
-                                            onChange={handleNamaDepan}
-                                            className="outline-none border-b-2 focus:border-lightyellow"
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Nama Belakang"
-                                            onChange={handleNamaBelakang}
-                                            className="outline-none border-b-2 focus:border-lightyellow"
-                                        />
+                        <div>
+                            <form
+                                className="flex flex-row justify-between"
+                                onSubmit={checkout}>
+                                <div className="border-2 w-[40%] ">
+                                    <div className="p-2 text-center text-xl bg-deepdark text-lightyellow">Metode Pembayaran</div>
+                                    <div className="delay-100 ease-in-out flex flex-col justify-center items-center p-3 gap-3">
+                                        <label
+                                            className={`${
+                                                metodePembayaran === 'kartukredit' ? 'bg-deepdark text-lightyellow' : 'bg-lightwhite'
+                                            } flex flex-row items-center h-10 border-2 rounded-lg justify-between w-full pl-3 pr-8`}>
+                                            <input
+                                                type="radio"
+                                                id="kartukredit"
+                                                name="metode"
+                                                value={'kartukredit'}
+                                                onClick={handleMetodePembayaran}
+                                                required
+                                                className="transition-all border w-3 h-3 rounded-full checked:bg-lightyellow appearance-none"
+                                            />
+                                            <div>Kartu Kredit</div>
+                                        </label>
+                                        <label
+                                            className={`${
+                                                metodePembayaran === 'kartudebit' ? 'bg-deepdark text-lightyellow' : 'bg-lightwhite'
+                                            } flex flex-row items-center  h-10 border-2 rounded-lg justify-between w-full pl-3 pr-8`}>
+                                            <input
+                                                type="radio"
+                                                name="metode"
+                                                id="kartudebit"
+                                                value={'kartudebit'}
+                                                onClick={handleMetodePembayaran}
+                                                required
+                                                className="transition-all border w-3 h-3 rounded-full checked:bg-lightyellow appearance-none"
+                                            />
+                                            <div>Kartu Debit</div>
+                                        </label>
+                                        <label
+                                            className={`${
+                                                metodePembayaran === 'PayPal' ? 'bg-deepdark text-lightyellow' : 'bg-lightwhite'
+                                            } flex flex-row items-center  h-10 border-2 rounded-lg justify-between w-full pl-3 pr-8`}>
+                                            {' '}
+                                            <input
+                                                type="radio"
+                                                name="metode"
+                                                id="PayPal"
+                                                value={'PayPal'}
+                                                onClick={handleMetodePembayaran}
+                                                required
+                                                className="transition-all border w-3 h-3 rounded-full checked:bg-lightyellow appearance-none"
+                                            />
+                                            <div>PayPal</div>
+                                        </label>
                                     </div>
-                                    <button
-                                        onClick={checkout}
-                                        className="flex justify-center items-center cursor-grab transition-all delay-75 ease-in-out border-solid border-2 rounded-lg p-2 w-full hover:bg-deepdark hover:text-lightyellow">
-                                        CheckOut
-                                    </button>
                                 </div>
-                            </div>
+                                <div className="w-[50%]">
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="Masukkan Nomor Kartu"
+                                            onChange={handleNomorKartu}
+                                            required
+                                            className="w-full placeholder:text-center outline-none border-b-2 focus:border-lightyellow"
+                                        />
+                                        <div className="grid grid-cols-2 gap-2 pb-8">
+                                            <input
+                                                type="text"
+                                                placeholder="00/00"
+                                                required
+                                                className="outline-none border-b-2 focus:border-lightyellow"
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="CVV"
+                                                required
+                                                className="outline-none border-b-2 focus:border-lightyellow"
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Nama Depan"
+                                                onChange={handleNamaDepan}
+                                                required
+                                                className="outline-none border-b-2 focus:border-lightyellow"
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Nama Belakang"
+                                                onChange={handleNamaBelakang}
+                                                required
+                                                className="outline-none border-b-2 focus:border-lightyellow"
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            className="flex justify-center items-center cursor-grab transition-all delay-75 ease-in-out border-solid border-2 rounded-lg p-2 w-full hover:bg-deepdark hover:text-lightyellow">
+                                            CheckOut
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

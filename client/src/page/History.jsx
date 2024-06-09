@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 function History() {
     const [historyData, setHistoryData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState({});
 
     useEffect(() => {
         async function fetchData() {
@@ -15,7 +14,6 @@ function History() {
                 if (resLoginData.data.isLoggedIn === false) window.location.replace('/login');
 
                 if (resLoginData.data.isLoggedIn) {
-                    setUser(resLoginData.data.user);
                     let data = {
                         user: resLoginData.data.user,
                     };

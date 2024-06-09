@@ -10,6 +10,11 @@ import CheckOut from '../page/CheckOut';
 import SingleCheckOut from '../page/SingleCheckOut';
 import History from '../page/History';
 import DetailHistory from '../page/DetailHistory';
+import About from '../page/About';
+import Dashboard from '../page/admin/Dashboard';
+
+// admin
+import AdminLayout from '../layout/AdminLayout';
 
 export const router = createBrowserRouter([
     {
@@ -19,6 +24,10 @@ export const router = createBrowserRouter([
             {
                 path: '/',
                 element: <Home />,
+            },
+            {
+                path: 'about',
+                element: <About />,
             },
             {
                 path: 'login',
@@ -57,6 +66,16 @@ export const router = createBrowserRouter([
                         element: <DetailHistory />,
                     },
                 ],
+            },
+        ],
+    },
+    {
+        path: '/admin',
+        element: <AdminLayout />,
+        children: [
+            {
+                path: '/admin',
+                element: <Dashboard />,
             },
         ],
     },

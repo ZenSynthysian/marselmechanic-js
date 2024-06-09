@@ -4,12 +4,15 @@ import axios from 'axios';
 
 function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(null);
     useEffect(() => {
         const url = `${import.meta.env.VITE_API_URL}/rest/api/accounts/isloggedin`;
         const checkLoggedIn = async () => {
             try {
                 const response = await axios.get(url, { withCredentials: true });
                 setIsLoggedIn(response.data.isLoggedIn);
+                setIsAdmin(response.data.role);
+                console.log(response.data);
             } catch (err) {
                 console.error(err);
             }
@@ -49,6 +52,11 @@ function Navbar() {
                     <Link to={'/about'}>
                         <span className=" hover:text-[#FEEFAD]">About</span>
                     </Link>
+                    {isAdmin === 'admin' ? (
+                        <Link to={'/admin'}>
+                            <span className=" hover:text-[#FEEFAD]">Dashboard</span>
+                        </Link>
+                    ) : null}
                     {!isLoggedIn ? (
                         <>
                             <Link to={'/login'}>
