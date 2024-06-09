@@ -70,14 +70,16 @@ function AdminNavbar() {
                                 <span>Dashboard</span>
                             </button>
                         </Link>
-                        <button className="transition-all duration-100 ease-in-out p-3 flex items-center gap-4 w-full opacity-90 hover:opacity-100 hover:border-b-4 hover:border-lightyellow bg-deepdark">
-                            <img
-                                src={boxIcon}
-                                alt="boxIcon"
-                                className="w-9"
-                            />
-                            <span>manage Product</span>
-                        </button>
+                        <Link to={'/admin/products'}>
+                            <button className="transition-all duration-100 ease-in-out p-3 flex items-center gap-4 w-full opacity-90 hover:opacity-100 hover:border-b-4 hover:border-lightyellow bg-deepdark">
+                                <img
+                                    src={boxIcon}
+                                    alt="boxIcon"
+                                    className="w-9"
+                                />
+                                <span>manage Product</span>
+                            </button>
+                        </Link>
                         <button className="transition-all duration-100 ease-in-out p-3 flex items-center gap-4 w-full opacity-90 hover:opacity-100 hover:border-b-4 hover:border-lightyellow bg-deepdark">
                             <img
                                 src={humanIcon}

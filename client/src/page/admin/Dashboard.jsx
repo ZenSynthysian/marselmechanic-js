@@ -32,7 +32,7 @@ function Dashboard() {
         <>
             <div className="p-10 flex flex-col gap-8">
                 <div className="flex justify-between">
-                    <div className="border-2 border-deepdark p-6 flex flex-col">
+                    <div className="w-[50%] border-2 border-deepdark p-6 flex flex-col">
                         <div className="text-3xl text-center">Product Sold</div>
                         <div className="flex justify-center items-center">
                             <img
@@ -43,7 +43,7 @@ function Dashboard() {
                         </div>
                         <div className="flex justify-center items-center text-4xl">{countHistory}</div>
                     </div>
-                    <div className="border-2 border-deepdark p-6 flex flex-col">
+                    <div className="w-[50%] border-2 border-deepdark p-6 flex flex-col">
                         <div className="text-3xl text-center">Online</div>
                         <div className="flex justify-center items-center">
                             <img
