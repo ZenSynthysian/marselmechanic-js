@@ -1,37 +1,32 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
-function EditProduct() {
-    const location = useLocation();
-    const { product } = location.state;
-    const [formData, setFormData] = useState({
-        id: product?.id,
-        nama: product?.nama,
-        harga: product?.harga,
-        foto: product?.foto,
+function AddProduct() {
+    const [product, setProduct] = useState({
+        nama: '',
+        harga: '',
+        foto: '',
     });
 
     function handleChange(e) {
-        setFormData({
-            ...formData,
+        setProduct({
+            ...product,
             [e.target.name]: e.target.value,
         });
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
+
         try {
-            const sendData = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/spareparts/edit/`, formData, { withCredentials: true });
-            if (!sendData.status === 200) console.log('gagal edit product');
-            window.location.replace('/admin/products');
+            const sendData = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/spareparts/add`, product, { withCredentials: true });
+            if (!sendData.status === 200) console.log('gagal add product');
+
+            window.location.href = '/admin/products';
         } catch (err) {
             console.log(`err on AddProduct, handleSubmit: ${err.message || err}`);
         }
     }
-
-    console.log(formData);
-    // console.log(product);
 
     return (
         <>
@@ -49,7 +44,6 @@ function EditProduct() {
                                 placeholder="Nama Sparepart"
                                 inputMode="text"
                                 name="nama"
-                                value={formData.nama}
                                 required
                             />
                             <input
@@ -59,7 +53,6 @@ function EditProduct() {
                                 placeholder="Harga Sparepart"
                                 inputMode="numeric"
                                 name="harga"
-                                value={formData.harga}
                                 required
                             />
                             <input
@@ -69,7 +62,6 @@ function EditProduct() {
                                 placeholder="Foto Sparepart (gunakan url)"
                                 inputMode="url"
                                 name="foto"
-                                value={formData.foto}
                                 required
                             />
                             <input
@@ -84,4 +76,4 @@ function EditProduct() {
     );
 }
 
-export default EditProduct;
+export default AddProduct;

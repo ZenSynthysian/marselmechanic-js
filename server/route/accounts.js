@@ -1,19 +1,8 @@
 const express = require('express');
 // const cookieParser = require('cookie-parser');
-const session = require('express-session');
 const db = require('../helper/sql');
 const router = express.Router();
 require('dotenv').config();
-
-// create a session
-router.use(
-    session({
-        secret: 'AYAM-TERBANG',
-        resave: false,
-        saveUninitialized: true,
-        cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 * 30 },
-    })
-);
 
 router.get('/get', (req, res) => {
     async function fetchAccounts() {

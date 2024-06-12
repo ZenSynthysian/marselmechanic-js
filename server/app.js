@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const db = require('./helper/sql');
+const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
@@ -10,6 +11,16 @@ app.use(
     cors({
         origin: `${process.env.CLIENT_API}`,
         credentials: true,
+    })
+);
+
+// create a session
+app.use(
+    session({
+        secret: 'AYAM-TERBANG',
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 * 30 },
     })
 );
 

@@ -21,8 +21,13 @@ function ManageProduct() {
     return (
         <>
             <div className="p-10 grow flex flex-col justify-center items-center">
-                <div className="w-full bg-deepdark text-lightyellow p-3">PRODUCTS MANAGEMENT</div>
-                <table className="table-auto w-full">
+                <div className="w-full flex justify-between bg-deepdark text-lightyellow p-3">
+                    <span className="p-3">PRODUCTS MANAGEMENT</span>
+                    <Link to={'/admin/products/add'}>
+                        <button className="transition-all duration-75 ease-in-out hover:bg-lightyellow hover:text-deepdark rounded-full p-3">Add Product</button>
+                    </Link>
+                </div>
+                <table className="table-auto">
                     <thead className="bg-deepdark bg-opacity-80 text-lightyellow">
                         <tr>
                             <td className="border-r-2 border-deepdark p-3 pb-4">ID</td>

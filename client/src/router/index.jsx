@@ -17,6 +17,7 @@ import Dashboard from '../page/admin/Dashboard';
 import AdminLayout from '../layout/AdminLayout';
 import ManageProduct from '../page/admin/ManageProduct';
 import EditProduct from '../page/admin/EditProduct';
+import AddProduct from '../page/admin/AddProduct';
 
 export const router = createBrowserRouter([
     {
@@ -86,6 +87,10 @@ export const router = createBrowserRouter([
             {
                 path: '/admin/products/manage',
                 element: <EditProduct />,
+            },
+            {
+                path: '/admin/products/add',
+                element: <AddProduct />,
             },
         ],
     },
