@@ -80,14 +80,16 @@ function AdminNavbar() {
                                 <span>manage Product</span>
                             </button>
                         </Link>
-                        <button className="transition-all duration-100 ease-in-out p-3 flex items-center gap-4 w-full opacity-90 hover:opacity-100 hover:border-b-4 hover:border-lightyellow bg-deepdark">
-                            <img
-                                src={humanIcon}
-                                alt="humanIcon"
-                                className="w-9"
-                            />
-                            <span>Manage Account</span>
-                        </button>
+                        <Link to={'/admin/accounts'}>
+                            <button className="transition-all duration-100 ease-in-out p-3 flex items-center gap-4 w-full opacity-90 hover:opacity-100 hover:border-b-4 hover:border-lightyellow bg-deepdark">
+                                <img
+                                    src={humanIcon}
+                                    alt="humanIcon"
+                                    className="w-9"
+                                />
+                                <span>Manage Account</span>
+                            </button>
+                        </Link>
                         <button className="transition-all duration-100 ease-in-out p-3 flex items-center gap-4 w-full opacity-90 hover:opacity-100 hover:border-b-4 hover:border-lightyellow bg-deepdark">
                             <img
                                 src={historyIcon}
@@ -103,10 +105,10 @@ function AdminNavbar() {
                     <div className={`${isOpen ? 'ml-72' : 'ml-6'} transition-all duration-300 ease-in-out flex justify-between`}>
                         <button
                             onClick={setOpen}
-                            className="h-16 w-[5%] flex justify-center items-center text-3xl">
+                            className="w-[3%] h-[4%] rounded-full translate-y-3 opacity-50 hover:opacity-100 flex justify-center items-center text-3xl fixed bg-lightyellow">
                             =
                         </button>
-                        <div className="h-16 flex flex-row justify-center items-center gap-5 pr-12">
+                        <div className="h-16 flex flex-row w-full justify-end items-center gap-5 pr-12">
                             {/* <button>
                                 <img
                                     src={bellIcon}

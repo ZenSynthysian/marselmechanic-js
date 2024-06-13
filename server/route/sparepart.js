@@ -117,4 +117,27 @@ router.post('/edit', async (req, res) => {
         console.log(`err on Sparepart, edit: ${err.message || err}`);
     }
 });
+
+router.post('/delete', (req, res) => {
+    try {
+        const { idSparepart } = req?.body;
+        const role = req.session.role;
+        console.log(role);
+        if (role === 'admin') {
+            const deleteData = new Promise((resolve, reject) => {
+                const query = 'DELETE FROM sparepart WHERE id = ?';
+                db.query(query, [idSparepart], (err, result) => {
+                    if (err) console.log(`err on Sparepart deleteData sql query, delete: ${err.message || err}`);
+                    resolve(result);
+                });
+            });
+            res.status(200).send('Sparepart deleted');
+        } else {
+            res.status(401).send('Unauthorized');
+        }
+    } catch (err) {
+        console.log(`err on Sparepart, delete: ${err.message || err}`);
+    }
+});
+
 module.exports = router;

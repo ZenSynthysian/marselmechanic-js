@@ -16,7 +16,19 @@ function ManageProduct() {
         }
 
         fetchData();
-    }, []);
+    }, [products]);
+
+    async function deleteProduct(id) {
+        try {
+            const data = {
+                idSparepart: id,
+            };
+            const deleteProductData = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/spareparts/delete`, data, { withCredentials: true });
+            if (!deleteProductData.status === 200) console.log('gagal delete product');
+        } catch (err) {
+            console.log(`err on ManageProducts, deleteProduct: ${err.message || err}`);
+        }
+    }
 
     return (
         <>
@@ -51,8 +63,15 @@ function ManageProduct() {
                                         <Link
                                             to={'/admin/products/manage'}
                                             state={{ product: { id: product.id, nama: product.nama, harga: product.harga, foto: product.foto } }}>
-                                            <button className="p-3">MANAGE</button>
+                                            <button className="transition-all duration-75 ease-in-out p-3 border-l-2 border-lightyellow hover:bg-lightyellow hover:text-deepdark w-[80%]">
+                                                MANAGE
+                                            </button>
                                         </Link>
+                                        <button
+                                            onClick={() => deleteProduct(product.id)}
+                                            className="transition-all duration-75 ease-in-out p-3 border-l-2 border-lightyellow hover:bg-lightyellow hover:text-deepdark w-[80%]">
+                                            DELETE
+                                        </button>
                                     </td>
                                 </tr>
                             );

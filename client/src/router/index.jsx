@@ -18,6 +18,9 @@ import AdminLayout from '../layout/AdminLayout';
 import ManageProduct from '../page/admin/ManageProduct';
 import EditProduct from '../page/admin/EditProduct';
 import AddProduct from '../page/admin/AddProduct';
+import ManageAccount from '../page/admin/ManageAccount';
+import EditAccount from '../page/admin/EditAccount';
+import AddAccount from '../page/admin/AddAccount';
 
 export const router = createBrowserRouter([
     {
@@ -91,6 +94,18 @@ export const router = createBrowserRouter([
             {
                 path: '/admin/products/add',
                 element: <AddProduct />,
+            },
+            {
+                path: '/admin/accounts',
+                element: <ManageAccount />,
+            },
+            {
+                path: '/admin/accounts/manage',
+                element: <EditAccount />,
+            },
+            {
+                path: '/admin/accounts/add',
+                element: <AddAccount />,
             },
         ],
     },

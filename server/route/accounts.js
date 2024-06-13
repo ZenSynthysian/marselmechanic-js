@@ -27,6 +27,7 @@ router.post('/register', (req, res) => {
     async function register() {
         try {
             const { username, email, password } = req.body;
+            const role = 'user';
             if (!username || !email || !password) {
                 res.status(400).json({ error: 'Missing username, email or password' });
             }
@@ -46,9 +47,9 @@ router.post('/register', (req, res) => {
                 return;
             }
 
-            const query = `INSERT INTO accounts ( username, email, password) VALUES ( '${username}', '${email}', '${password}')`;
+            const query = `INSERT INTO accounts ( username, email, password, role) VALUES ( '${username}', '${email}', '${password}', ?)`;
             const data = await new Promise((resolve, reject) => {
-                db.query(query, (err, response) => {
+                db.query(query, [role], (err, response) => {
                     if (err) {
                         res.status(500).json('gagal register');
                     } else {
@@ -152,6 +153,68 @@ router.get('/get/online', async (req, res) => {
         res.status(200).send(onlineData);
     } catch (err) {
         console.error(`error on get online: ${err.message || err}`);
+    }
+});
+
+router.patch('/edit', async (req, res) => {
+    try {
+        const { username, email, password, role, id } = req.body;
+        const userRole = req.session.role;
+
+        if (userRole !== 'admin') return res.status(401).send('Unauthorized');
+        const query = `UPDATE accounts SET username = ?, email = ?, password = ?, role = ? WHERE id = ?`;
+        const data = await new Promise((resolve, reject) => {
+            db.query(query, [username, email, password, role, id], (err, result) => {
+                if (err) console.log(`error on update accounts, query: ${err.message || err}`);
+                resolve(result);
+            });
+        });
+        res.status(200).send(data);
+    } catch (err) {
+        console.log(`error on update accounts: ${err.message || err}`);
+    }
+});
+
+router.post('/delete', async (req, res) => {
+    try {
+        const role = req.session.role;
+        if (role === 'admin') {
+            const { idAccount } = req.body;
+            const query = `DELETE FROM accounts WHERE id = ?`;
+            const data = await new Promise((resolve, reject) => {
+                db.query(query, [idAccount], (err, result) => {
+                    if (err) console.log(`error on delete accounts, query: ${err.message || err}`);
+                    resolve(result);
+                });
+            });
+            return;
+        } else {
+            res.status(401).send('Unauthorized');
+        }
+    } catch (err) {
+        console.log(`error on delete accounts: ${err.message || err}`);
+    }
+});
+
+router.post('/add', async (req, res) => {
+    try {
+        const { username, email, password, role } = req.body;
+        const userRole = req.session.role;
+
+        if (userRole === 'admin') {
+            const query = `INSERT INTO accounts (username, email, password, role) VALUES (?, ?, ?, ?)`;
+            const data = await new Promise((resolve, reject) => {
+                db.query(query, [username, email, password, role], (err, result) => {
+                    if (err) console.log(`error on add accounts, query: ${err.message || err}`);
+                    resolve(result);
+                });
+            });
+            res.status(200).send({ message: 'account added' });
+        } else {
+            res.status(401).send('Unauthorized');
+        }
+    } catch (err) {
+        console.log(`error on add accounts: ${err.message || err}`);
     }
 });
 
