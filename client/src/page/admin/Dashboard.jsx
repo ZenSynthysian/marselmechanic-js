@@ -18,7 +18,7 @@ function Dashboard() {
                 if (!fullHistoryData.status === 200) console.log('gagal get history');
                 setCountHistory(fullHistoryData.data[0].count);
 
-                const getOnlineData = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/get/online`);
+                const getOnlineData = await axios.get(`${import.meta.env.VITE_API_URL}/rest/api/accounts/online`);
                 if (!getOnlineData.status === 200) console.log('gagal get online');
                 setOnlineData(getOnlineData.data[0].count);
             } catch (err) {
@@ -27,7 +27,7 @@ function Dashboard() {
         }
 
         fetchData();
-    }, [onlineData, countHistory, history]);
+    }, []);
     return (
         <>
             <div className="p-10 flex flex-col gap-8">

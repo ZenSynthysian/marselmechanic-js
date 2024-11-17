@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/insert', (req, res) => {
     async function insert() {
-        const { idSparepart, user, amount } = req?.body;
+        const { idPlan, user, amount } = req?.body;
 
         // getting user id
         let id;
@@ -32,7 +32,7 @@ router.post('/insert', (req, res) => {
         // validate cart
         let status;
         try {
-            const query = `select COUNT(*) as count from carts where id_account = ${id} and id_sparepart = ${idSparepart}`;
+            const query = `select COUNT(*) as count from carts where id_account = ${id} and id_plan = ${idPlan}`;
             const data = await new Promise((resolve, reject) => {
                 db.query(query, (err, result) => {
                     if (err) res.status(400).send(err.message || err);
@@ -43,7 +43,7 @@ router.post('/insert', (req, res) => {
             status = data;
 
             if (status > 0) {
-                const query = `select amount from carts where id_account = ${id} and id_sparepart = ${idSparepart}`;
+                const query = `select amount from carts where id_account = ${id} and id_plan = ${idPlan}`;
                 const data = await new Promise((resolve, reject) => {
                     db.query(query, (err, result) => {
                         if (err) res.status(400).send(err.message || err);
@@ -54,7 +54,7 @@ router.post('/insert', (req, res) => {
                 const newAmount = parseInt(amount);
 
                 try {
-                    const query = `UPDATE carts SET amount = ${newAmount} WHERE id_account = ${id} and id_sparepart = ${idSparepart}`;
+                    const query = `UPDATE carts SET amount = ${newAmount} WHERE id_account = ${id} and id_plan = ${idPlan}`;
                     const data = await new Promise((resolve, reject) => {
                         db.query(query, (err, result) => {
                             if (err) res.status(400).send(err.message || err);
@@ -62,13 +62,14 @@ router.post('/insert', (req, res) => {
                         });
                     });
 
-                    res.status(200).send({ updated: true });
+                    return res.status(200).send({ updated: true });
                 } catch (err) {
                     console.log(err.message || err);
                 }
             } else {
                 try {
-                    const query = `INSERT INTO carts (id_account, id_sparepart, amount) VALUES (${id}, ${idSparepart}, ${amount})`;
+                    let UUID = crypto.randomUUID();
+                    const query = `INSERT INTO carts (id_account, id_plan, amount, chat_room) VALUES (${id}, ${idPlan}, ${amount}, '${UUID}')`;
                     const data = await new Promise((resolve, reject) => {
                         db.query(query, (err, result) => {
                             if (err) res.status(400).send(err.message || err);
@@ -76,7 +77,7 @@ router.post('/insert', (req, res) => {
                         });
                     });
 
-                    res.status(200).send({ success: true });
+                    return res.status(200).send({ success: true });
                 } catch (err) {
                     console.log(err.message || err);
                 }
@@ -91,7 +92,7 @@ router.post('/insert', (req, res) => {
 
 router.post('/amount/account/get', async (req, res) => {
     try {
-        const { idSparepart, user } = req?.body;
+        const { idPlan, user } = req?.body;
         let userId;
 
         // Get user ID from username
@@ -114,8 +115,8 @@ router.post('/amount/account/get', async (req, res) => {
 
         // Get amount from carts
         const cartData = await new Promise((resolve, reject) => {
-            const query = `SELECT amount FROM carts WHERE id_sparepart = ? AND id_account = ?`;
-            db.query(query, [idSparepart, userId], (err, result) => {
+            const query = `SELECT amount FROM carts WHERE id_plan = ? AND id_account = ?`;
+            db.query(query, [idPlan, userId], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -190,13 +191,13 @@ router.post('/account/get/value', async (req, res) => {
 
         let productId = [];
         cartData.map((item) => {
-            productId.push(item.id_sparepart);
+            productId.push(item.id_plan);
         });
 
         const getProduct = await new Promise((resolve, reject) => {
             const placeholder = productId.map(() => '?').join(', ');
 
-            const query = `SELECT * FROM sparepart WHERE id IN (${placeholder}) ORDER BY FIELD(id, ${productId.join(', ')})`;
+            const query = `SELECT * FROM plans WHERE id IN (${placeholder}) ORDER BY FIELD(id, ${productId.join(', ')})`;
             db.query(query, productId, (err, result) => {
                 if (err) res.status(400).send(err.message || err);
                 resolve(result);
@@ -229,7 +230,7 @@ router.post('/account/pay', async (req, res) => {
                 resolve(result);
             });
         });
-        const productId = cartData.map((item) => item.id_sparepart);
+        const productId = cartData.map((item) => item.id_plan);
         const productIdJson = JSON.stringify(productId);
         const dateNow = formatDateTime();
 
@@ -265,7 +266,7 @@ router.post('/account/pay', async (req, res) => {
             res.status(200).send({ message: 'Pembelian Berhasil' });
         } else {
             const flushData = await new Promise((resolve, reject) => {
-                const query = `DELETE FROM carts WHERE id_account = ? AND id_sparepart IN (${productId})`;
+                const query = `DELETE FROM carts WHERE id_account = ? AND id_plan IN (${productId})`;
                 db.query(query, [userId], (err, result) => {
                     if (err) res.status(400).send(err.message || err);
                     resolve(result);
@@ -332,6 +333,22 @@ router.get('/history/count/get', async (req, res) => {
         res.status(200).send(getHistoryData);
     } catch (err) {
         console.log(`Err on cart, history get limit: ${err.message || err}`);
+    }
+});
+
+router.post('/delete', async (req, res) => {
+    try {
+        const { id } = req?.body;
+        const deleteData = await new Promise((resolve, reject) => {
+            const query = `DELETE FROM carts WHERE id = ?`;
+            db.query(query, [id], (err, result) => {
+                if (err) return res.status(400).send(err.message || err);
+                resolve(result);
+            });
+        });
+        return res.status(200).send('History deleted');
+    } catch (err) {
+        console.log(err.message || err);
     }
 });
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-function ProductBar({ nama, harga, foto, id, list, jumlah, cartId }) {
+function ProductBar({ nama, harga, foto, id, list, jumlah, cartId, title, id_chat_room }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [elementValue, setElementValue] = useState(0);
 
@@ -27,7 +27,7 @@ function ProductBar({ nama, harga, foto, id, list, jumlah, cartId }) {
         setElementValue(newValue);
 
         const data = {
-            idSparepart: id,
+            idPlan: id,
             amount: newValue,
             user: isLoggedIn.user,
         };
@@ -49,10 +49,11 @@ function ProductBar({ nama, harga, foto, id, list, jumlah, cartId }) {
         setElementValue(newValue);
 
         const data = {
-            idSparepart: id,
+            idPlan: id,
             amount: newValue,
             user: isLoggedIn.user,
         };
+        console.log(data);
 
         try {
             axios.post(`${import.meta.env.VITE_API_URL}/rest/api/cart/insert`, data, { withCredentials: true }).then((response) => {
@@ -65,6 +66,27 @@ function ProductBar({ nama, harga, foto, id, list, jumlah, cartId }) {
         }
     }
 
+    function deleteHandle(id) {
+        const data = {
+            id: id,
+        };
+
+        confirm('Apakah anda yakin ingin menghapus?');
+
+        axios
+            .post(`${import.meta.env.VITE_API_URL}/rest/api/cart/delete`, data, { withCredentials: true })
+            .then((response) => {
+                if (response.status !== 200) {
+                    console.error('Gagal mengurangi dari keranjang');
+                }
+            })
+            .catch((err) => {
+                console.error(err.message);
+            });
+
+        window.location.reload();
+    }
+
     return (
         <div>
             <div className="flex-grow p-8">
@@ -75,17 +97,30 @@ function ProductBar({ nama, harga, foto, id, list, jumlah, cartId }) {
                                 {list}
                             </div>
                             <div className="transition-all border-r-2 w-[200px] text-2xl border-lightyellow items-center justify-center flex overflow-hidden">
-                                <img
-                                    src={foto}
-                                    alt={nama}
-                                    className="w-[100px]"
-                                />
+                                {foto ? (
+                                    <img
+                                        src={foto}
+                                        alt={nama}
+                                        className="w-[100px]"
+                                    />
+                                ) : (
+                                    ''
+                                )}
+                                {title ? title : ''}
                             </div>
                             <div className="transition-all border-r-2 w-[800px] text-xl pl-4 items-center flex truncate">{nama}</div>
-                            <div className="group/d1 transition-all w-[100px] text-2xl hover:w-[1000px] max-w-[1000px] items-center flex flex-row overflow-hidden">
+                            <div className="group/d1 transition-all w-[100px] text-2xl hover:w-[1500px] max-w-[1500px] items-center flex flex-row overflow-hidden">
                                 <div className="transition-all h-full group-hover:bg-deepdark group-hover:text-lightyellow w-[100px] flex justify-center items-center">::</div>
-                                <div className="transition-all h-full group-hover:bg-deepdark group-hover:text-lightyellow w-0 border-l-2 group-hover/d1:w-[300px] flex justify-center items-center invisible group-hover/d1:visible">
-                                    {harga}
+                                <div className="transition-all h-full group-hover/d1:p-3 group-hover:bg-deepdark group-hover:text-lightyellow w-0 border-l-2 group-hover/d1:w-[100px] flex justify-center items-center invisible group-hover/d1:visible">
+                                    <button
+                                        onClick={() => deleteHandle(cartId)}
+                                        type="button"
+                                        className="p-3">
+                                        Delete
+                                    </button>
+                                </div>
+                                <div className="transition-all h-full group-hover/d1:p-3 group-hover:bg-deepdark group-hover:text-lightyellow w-0 border-l-2 group-hover/d1:w-[300px] flex justify-center items-center invisible group-hover/d1:visible">
+                                    {harga ? harga : 'Waiting..'}
                                 </div>
                                 <div className="group-hover/d1:p-3 gap-10 transition-all h-full group-hover:bg-lightyellow w-0 group-hover:text-deepdark group-hover/d1:w-[200px] flex flex-row justify-center items-center invisible group-hover/d1:visible">
                                     <button
@@ -104,10 +139,26 @@ function ProductBar({ nama, harga, foto, id, list, jumlah, cartId }) {
                                         {'>'}
                                     </button>
                                 </div>
+                                <div className="group-hover/d1:p-3 gap-10 transition-all h-full group-hover:bg-deepdark w-0 group-hover:text-lightyellow border-r-2 border-r-lightyellow group-hover/d1:w-[200px] flex flex-row justify-center items-center invisible group-hover/d1:visible">
+                                    <Link to={`/chat/${id_chat_room}`}>
+                                        <button
+                                            type="button"
+                                            className="h-full">
+                                            Chat
+                                        </button>
+                                    </Link>
+                                </div>
                                 <Link
-                                    to="/store/singlecheckout"
+                                    to={harga ? `/store/singlecheckout` : ''}
                                     state={{ products: { id, nama, harga, foto, jumlah, cartId } }}
-                                    className="transition-all h-full group-hover:bg-deepdark hover:text-lightwhite text-lightyellow group-hover/d1:w-full w-0 flex justify-center items-center invisible group-hover/d1:visible">
+                                    onClick={
+                                        harga
+                                            ? ''
+                                            : () => {
+                                                  alert('Harga Belum Ditentukan');
+                                              }
+                                    }
+                                    className={`transition-all h-full group-hover:bg-deepdark hover:text-lightwhite text-lightyellow group-hover/d1:w-full w-0 flex justify-center items-center invisible group-hover/d1:visible`}>
                                     <button>{'=>'}</button>
                                 </Link>
                             </div>
@@ -123,7 +174,8 @@ ProductBar.propTypes = {
     nama: PropTypes.string,
     harga: PropTypes.number,
     foto: PropTypes.string,
-    id: PropTypes.string,
+    id: PropTypes.any,
+    title: PropTypes.string,
     list: PropTypes.any,
     jumlah: PropTypes.number,
     cartId: PropTypes.any,

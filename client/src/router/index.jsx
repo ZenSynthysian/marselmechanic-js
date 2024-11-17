@@ -21,6 +21,9 @@ import AddProduct from '../page/admin/AddProduct';
 import ManageAccount from '../page/admin/ManageAccount';
 import EditAccount from '../page/admin/EditAccount';
 import AddAccount from '../page/admin/AddAccount';
+import ChatRoom from '../page/ChatRoom';
+import ManageChat from '../page/admin/ManageChat';
+import OpenChat from '../page/admin/OpenChat';
 
 export const router = createBrowserRouter([
     {
@@ -42,6 +45,10 @@ export const router = createBrowserRouter([
             {
                 path: 'register',
                 element: <Register />,
+            },
+            {
+                path: 'chat/:id_chat_room',
+                element: <ChatRoom />,
             },
             {
                 path: 'store',
@@ -106,6 +113,18 @@ export const router = createBrowserRouter([
             {
                 path: '/admin/accounts/add',
                 element: <AddAccount />,
+            },
+            {
+                path: '/admin/chats',
+                element: <ManageChat />,
+            },
+            // {
+            //     path: '/admin/chat/manage',
+            //     element: <ManageChat />,
+            // },
+            {
+                path: '/admin/chat/open/:id_chat_room',
+                element: <OpenChat />,
             },
         ],
     },

@@ -78,13 +78,15 @@ function Cart() {
                             return (
                                 <ProductBar
                                     key={index}
-                                    nama={product.nama}
-                                    foto={product.foto}
-                                    harga={product.harga}
+                                    nama={product.tier}
+                                    title={product.class}
+                                    // foto={product.class}
+                                    harga={cart[index].harga}
                                     id={product.id}
                                     cartId={cart[index].id}
                                     list={index + 1}
                                     jumlah={cart[index].amount}
+                                    id_chat_room={cart[index].chat_room}
                                 />
                             );
                         })}

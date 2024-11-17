@@ -98,6 +98,16 @@ function AdminNavbar() {
                             />
                             <span>History</span>
                         </button>
+                        <Link to={'/admin/chats'}>
+                            <button className="transition-all duration-100 ease-in-out p-3 flex items-center gap-4 w-full opacity-90 hover:opacity-100 hover:border-b-4 hover:border-lightyellow bg-deepdark">
+                                {/* <img
+                                src={historyIcon}
+                                alt="historyIcon"
+                                className="w-9"
+                            /> */}
+                                <span>Chat</span>
+                            </button>
+                        </Link>
                         <span className="flex bg-deepdark opacity-90 h-full"></span>
                     </div>
                 </div>

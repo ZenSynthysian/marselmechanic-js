@@ -4,6 +4,46 @@ const db = require('../helper/sql');
 const router = express.Router();
 require('dotenv').config();
 
+router.get('/get/:id', (req, res) => {
+    const { id } = req.params;
+    async function fetchAccounts() {
+        try {
+            const query = `SELECT username FROM accounts WHERE id = ${id}`;
+            let data = await new Promise((resolve, reject) => {
+                db.query(query, (err, res) => {
+                    if (err) reject(new Error('Fail to fetch accounts'));
+                    resolve(res);
+                });
+            });
+            res.status(200).send(data);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    }
+    fetchAccounts();
+});
+
+router.post('/getID', (req, res) => {
+    const { nama } = req.body;
+    async function fetchAccounts() {
+        try {
+            const query = `SELECT id FROM accounts WHERE username = '${nama}'`;
+            let data = await new Promise((resolve, reject) => {
+                db.query(query, (err, res) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(res);
+                });
+            });
+            res.status(200).send(data);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    }
+    fetchAccounts();
+});
+
 router.get('/get', (req, res) => {
     async function fetchAccounts() {
         try {
@@ -140,7 +180,7 @@ router.get('/session', (req, res) => {
     res.status(200).json(req.session);
 });
 
-router.get('/get/online', async (req, res) => {
+router.get('/online', async (req, res) => {
     try {
         const onlineData = await new Promise((resolve, reject) => {
             const query = `SELECT COUNT(*) as count FROM accounts WHERE status = 1`;

@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { formatCurrency } from '../helper/formatCurrency';
 
-function Card({ nama, harga, foto, id }) {
+function Card({ nama, harga, harga2, foto, id, width, lists = [], note }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [elementValue, setElementValue] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ function Card({ nama, harga, foto, id }) {
                 // Then, fetch the initial value if the user is logged in
                 if (responseLoggedIn.data.isLoggedIn) {
                     const data = {
-                        idSparepart: id,
+                        idPlan: id,
                         user: responseLoggedIn.data.user,
                     };
                     const responseInitialValue = await axios.post(`${import.meta.env.VITE_API_URL}/rest/api/cart/amount/account/get`, data);
@@ -53,9 +54,13 @@ function Card({ nama, harga, foto, id }) {
         const amount = element.innerText;
 
         try {
+            if (amount < 1) {
+                alert('Jumlah tidak boleh kurang dari 1');
+                return; // Exit the function early to stop the rest of the code from running
+            }
             const sendData = async () => {
                 const data = {
-                    idSparepart: id,
+                    idPlan: id,
                     user: isLoggedIn.user,
                     amount: amount,
                 };
@@ -77,12 +82,12 @@ function Card({ nama, harga, foto, id }) {
     }
 
     function handleClass() {
-        return elementValue > 0 ? 'border-2 border-lightyellow' : 'border-2';
+        return elementValue > 0 ? 'border-4 border-deepdark border-dotted' : 'border-2';
     }
 
     if (loading) {
         return (
-            <div className={`${handleClass()} blur-sm rounded-xl flex flex-col mb-3 w-52`}>
+            <div className={`${handleClass()} blur-sm rounded-xl flex flex-col mb-3 w-[${width}]`}>
                 <div className="bg-deepdark text-lightwhite h-16 text-center justify-center items-center flex">
                     <span className="truncate pl-3">{nama}</span>
                 </div>
@@ -94,7 +99,9 @@ function Card({ nama, harga, foto, id }) {
                     />
                 </div>
                 <div className="text-center bg-lightdark text-lightwhite">
-                    <p>{harga}</p>
+                    <p>
+                        {formatCurrency(harga)} {harga2 ? `- ${formatCurrency(harga2)}` : ''}
+                    </p>
                 </div>
                 {!isLoggedIn.isLoggedIn ? (
                     <div className="bg-deepdark h-16 flex flex-row gap-3 items-center p-2">
@@ -134,19 +141,39 @@ function Card({ nama, harga, foto, id }) {
     }
 
     return (
-        <div className={`${handleClass()} rounded-xl flex flex-col mb-3 w-52`}>
+        <div className={`${handleClass()} rounded-xl flex h-full flex-col mb-3 w-[${width}]`}>
             <div className="bg-deepdark text-lightwhite h-16 text-center justify-center items-center flex">
                 <span className="truncate pl-3">{nama}</span>
             </div>
-            <div className="flex justify-center bg-white">
+            <div className="flex justify-center items-center p-3">
                 <img
                     src={foto}
                     alt={nama}
                     width={'150px'}
                 />
             </div>
+            <div className="flex flex-col justify-center items-center text-center pt-4 h-full">
+                {lists.map((list, index) => (
+                    <span
+                        className="border-dotted border-b-2 border-deepdark text-deepdark hover:text-lightyellow hover:bg-deepdark w-full transition-all delay-10 ease-in-out p-4"
+                        key={index}>
+                        {list}
+                    </span>
+                ))}
+            </div>
+            {note ? (
+                <div className="flex justify-center items-center text-center">
+                    <div className="w-full bg-lightdark text-lightyellow border-b-2 border-lightwhite p-2">
+                        <span className="animate-pulse">{note}</span>
+                    </div>
+                </div>
+            ) : (
+                ''
+            )}
             <div className="text-center bg-lightdark text-lightwhite">
-                <p>{harga}</p>
+                <p>
+                    {formatCurrency(harga)} {harga2 ? `- ${formatCurrency(harga2)}` : ''}
+                </p>
             </div>
             {!isLoggedIn.isLoggedIn ? (
                 <div className="bg-deepdark h-16 flex flex-row gap-3 items-center p-2">
@@ -188,8 +215,12 @@ function Card({ nama, harga, foto, id }) {
 Card.propTypes = {
     nama: PropTypes.string,
     harga: PropTypes.number,
+    harga2: PropTypes.number,
     foto: PropTypes.string,
     id: PropTypes.string,
+    width: PropTypes.string,
+    note: PropTypes.string,
+    lists: PropTypes.array,
 };
 
 export default Card;
